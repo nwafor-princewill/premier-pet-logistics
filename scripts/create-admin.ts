@@ -1,26 +1,30 @@
 import connectDB from '@/lib/mongodb';
 import Admin from '@/models/Admin';
-import bcrypt from 'bcryptjs';
 
 async function createAdmin() {
-  await connectDB();
-  
-  const existing = await Admin.findOne({ username: 'admin' });
-  if (existing) {
-    console.log('Admin already exists');
-    process.exit(0);
+  try {
+    await connectDB();
+
+    // Optional: delete existing admin first (to reset password)
+    await Admin.deleteOne({ username: 'admin' });
+    console.log('🧹 Removed existing admin (if any)');
+
+    const admin = new Admin({
+      username: 'admin',
+      password: 'yourpassword123', // you can change this
+      email: 'admin@premierpetlogistics.com',
+      role: 'super-admin'
+    });
+
+    await admin.save();
+    console.log('✅ Admin created successfully!');
+    console.log('   Username: admin');
+    console.log('   Password: yourpassword123');
+  } catch (error) {
+    console.error('❌ Error:', error);
+  } finally {
+    process.exit();
   }
-
-  const admin = new Admin({
-    username: 'admin',
-    password: 'yourpassword123', // change this!
-    email: 'admin@premierpetlogistics.com',
-    role: 'super-admin'
-  });
-
-  await admin.save();
-  console.log('✅ Admin created successfully');
-  process.exit(0);
 }
 
 createAdmin();
