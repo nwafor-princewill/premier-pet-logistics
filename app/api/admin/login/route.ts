@@ -1,12 +1,28 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import Admin from '@/models/Admin';
+import mongoose from 'mongoose';
 
 export async function POST(request: NextRequest) {
   try {
     console.log('🔐 Login API called');
+    
+    // Log the MongoDB connection string (redacted)
+    const uri = process.env.MONGODB_URI || 'not set';
+    const redactedUri = uri.replace(/:[^:]*@/, ':****@');
+    console.log('📦 MONGODB_URI:', redactedUri);
+    
     await connectDB();
     console.log('✅ MongoDB connected');
+    
+    // Log database name
+    const dbName = mongoose.connection.db?.databaseName;
+    console.log('📀 Database name:', dbName);
+    
+    // Log collection names
+    const collections = await mongoose.connection.db?.listCollections().toArray();
+    const collectionNames = collections?.map(c => c.name) || [];
+    console.log('📚 Collections:', collectionNames);
 
     const { username, password } = await request.json();
     console.log('📦 Request body:', { username, password: '***' });
