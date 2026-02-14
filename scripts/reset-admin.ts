@@ -1,5 +1,9 @@
+import { config } from 'dotenv';
 import connectDB from '../lib/mongodb';
 import Admin from '../models/Admin';
+
+// Load environment variables from .env.local
+config({ path: '.env.local' });
 
 async function resetAdmin() {
   try {
